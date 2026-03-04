@@ -4,19 +4,34 @@ import Sky from "./components/Sky"
 import MusicPlayer from "./components/MusicPlayer"
 import Scroll from "./components/Scroll"
 import Star from "./components/Star"
-
+import AuthModal from "./components/AuthModal"
+import LoadingScreen from "./components/LoadingScreen"
 function App() {
   const [stars, setStars] = useState([])
   const [selectedStar, setSelectedStar] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
+  const [showAuth, setShowAuth] = useState(false)
+  const [appReady, setAppReady] = useState(false)
 
   useEffect(() => {
     fetchLetters()
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null)
+      }
+    )
+
+    return () => subscription.unsubscribe()
   }, [])
 
   const fetchLetters = async () => {
     setLoading(true)
-
     const { data, error } = await supabase
       .from("letters")
       .select("*")
@@ -27,7 +42,6 @@ function App() {
     } else {
       setStars(data)
     }
-
     setLoading(false)
   }
 
@@ -40,7 +54,8 @@ function App() {
         is_private: letter.isPrivate,
         x: letter.x,
         y: letter.y,
-        glow_count: 0
+        glow_count: 0,
+        user_id: user ? user.id : null
       }])
       .select()
       .single()
@@ -88,13 +103,38 @@ function App() {
     }))
   }
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+  }
+
   return (
     <div className="app-container">
+      <LoadingScreen onComplete={() => setAppReady(true)} />
+
       <div className="background-layer" />
       <Sky />
       <MusicPlayer />
 
-      {!loading && stars.map((star) => (
+      <div className="top-bar">
+        {user ? (
+          <div className="user-info">
+            <span className="user-email">{user.email}</span>
+            <button className="signout-btn" onClick={handleSignOut}>
+              leave
+            </button>
+          </div>
+        ) : (
+          <button
+            className="signin-btn"
+            onClick={() => setShowAuth(true)}
+          >
+            ✦ enter
+          </button>
+        )}
+      </div>
+
+      {appReady && !loading && stars.map((star) => (
         <Star
           key={star.id}
           star={star}
@@ -128,6 +168,10 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {showAuth && (
+        <AuthModal onClose={() => setShowAuth(false)} />
       )}
 
       <Scroll onSend={handleSend} />

@@ -1,0 +1,210 @@
+/* ── BASE ───────────────────────────────────── */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    overflow: hidden;
+    transition: opacity 1.3s ease;
+    image-rendering: pixelated;
+  }
+  
+  .loading-fade {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  /* ── BACKGROUND IMAGE ───────────────────────── */
+  .loading-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('/loading-bg.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+  }
+  
+  /* slight dark vignette over image so text pops */
+  .loading-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      rgba(8, 4, 20, 0.5) 100%
+    );
+  }
+  
+  /* ── SHOOTING STARS ─────────────────────────── */
+  .shoot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #ffffff;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow:
+      0 0 4px 2px rgba(255, 255, 255, 0.8),
+      0 0 8px 4px rgba(200, 210, 255, 0.4);
+  }
+  
+  .shoot::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+    transform: rotate(180deg);
+  }
+  
+  .shoot-1 {
+    top: 15%;
+    left: 10%;
+    animation: shooting 5s ease-in 0.5s infinite;
+  }
+  
+  .shoot-2 {
+    top: 8%;
+    left: 30%;
+    animation: shooting 5s ease-in 2.2s infinite;
+  }
+  
+  .shoot-3 {
+    top: 22%;
+    left: 55%;
+    animation: shooting 5s ease-in 3.8s infinite;
+  }
+  
+  @keyframes shooting {
+    0%   {
+      opacity: 0;
+      transform: translate(0, 0) rotate(35deg);
+    }
+    5%   { opacity: 1; }
+    40%  {
+      opacity: 0;
+      transform: translate(35vw, 20vh) rotate(35deg);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(35vw, 20vh) rotate(35deg);
+    }
+  }
+  
+  /* ── TWINKLING DOTS OVER THE SKY ────────────── */
+  .twinkle-field {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  
+  .twinkle-dot {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 50%;
+    animation: twinkleDot 2.5s ease-in-out infinite;
+  }
+  
+  /* scatter them manually across the sky area */
+  .td-0  { top:  6%; left:  8%; animation-delay: 0.0s; }
+  .td-1  { top: 10%; left: 20%; animation-delay: 0.3s; }
+  .td-2  { top:  4%; left: 35%; animation-delay: 0.7s; }
+  .td-3  { top: 14%; left: 48%; animation-delay: 1.1s; }
+  .td-4  { top:  7%; left: 62%; animation-delay: 0.5s; }
+  .td-5  { top: 18%; left: 75%; animation-delay: 1.4s; }
+  .td-6  { top:  5%; left: 88%; animation-delay: 0.2s; }
+  .td-7  { top: 22%; left: 15%; animation-delay: 1.8s; }
+  .td-8  { top: 28%; left: 42%; animation-delay: 0.9s; }
+  .td-9  { top: 20%; left: 58%; animation-delay: 1.6s; }
+  .td-10 { top: 12%; left: 70%; animation-delay: 0.4s; }
+  .td-11 { top: 30%; left: 82%; animation-delay: 2.1s; }
+  .td-12 { top:  9%; left: 92%; animation-delay: 0.6s; }
+  .td-13 { top: 25%; left: 28%; animation-delay: 1.3s; }
+  .td-14 { top: 16%; left: 52%; animation-delay: 2.3s; }
+  .td-15 { top:  3%; left: 78%; animation-delay: 0.8s; }
+  .td-16 { top: 32%; left: 65%; animation-delay: 1.9s; }
+  .td-17 { top: 11%; left: 44%; animation-delay: 1.2s; }
+  
+  @keyframes twinkleDot {
+    0%   { opacity: 0.1; transform: scale(0.8); }
+    50%  { opacity: 1;   transform: scale(1.4); }
+    100% { opacity: 0.1; transform: scale(0.8); }
+  }
+  
+  /* ── BOTTOM FOOTER ──────────────────────────── */
+  .loading-footer {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: footerReveal 1.5s ease 0.5s forwards;
+    opacity: 0;
+  }
+  
+  @keyframes footerReveal {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+  }
+  
+  .loading-subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: rgba(210, 190, 255, 0.7);
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
+    text-shadow: 0 0 12px rgba(180, 140, 255, 0.5);
+  }
+  
+  /* pixel progress bar */
+  .loading-bar-wrap {
+    width: 140px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    image-rendering: pixelated;
+  }
+  
+  .loading-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7040c0, #c080ff, #e0b0ff);
+    box-shadow:
+      0 0 6px rgba(180, 120, 255, 0.8),
+      0 0 12px rgba(160, 100, 255, 0.4);
+    animation: barFill 3.5s ease forwards;
+  }
+  
+  @keyframes barFill {
+    from { width: 0%;   }
+    to   { width: 100%; }
+  }
+  
+  .loading-hint {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: rgba(200, 180, 255, 0.35);
+    letter-spacing: 0.2em;
+    text-transform: lowercase;
+    animation: hintBlink 2s ease-in-out infinite;
+  }
+  
+  @keyframes hintBlink {
+    0%   { opacity: 0.2; }
+    50%  { opacity: 0.6; }
+    100% { opacity: 0.2; }
+  }
