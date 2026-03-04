@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  #root{
+    width:100%;
+    height:100vh
+}
+  body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0d0d1a;
+  }
+  
+  .app-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  .background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/background.png');
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+  }
