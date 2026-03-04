@@ -295,3 +295,26 @@
     white-space: pre-wrap;
     flex: 1;
   }
+  .viewer-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  
+  .glow-btn {
+    background: transparent;
+    border: 1px solid rgba(139, 95, 0, 0.4);
+    color: #6b3d00;
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.2s ease;
+  }
+  
+  .glow-btn:hover {
+    background: rgba(139, 95, 0, 0.1);
+    border-color: #6b3d00;
+  }
