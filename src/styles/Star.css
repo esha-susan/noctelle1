@@ -1,0 +1,124 @@
+.star-letter {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease;
+    image-rendering: pixelated;
+  }
+  
+  .star-letter:hover {
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+  
+  /* ── PIXEL STAR SHAPE ───────────────────────── */
+  .star-core {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    box-shadow:
+      /* center */
+      0px 0px 0 1px #ffffff,
+  
+      /* top arm */
+      0px -4px 0 0px #ffffff,
+      0px -8px 0 0px #d0d8ff,
+  
+      /* bottom arm */
+      0px 4px 0 0px #ffffff,
+      0px 8px 0 0px #d0d8ff,
+  
+      /* left arm */
+      -4px 0px 0 0px #ffffff,
+      -8px 0px 0 0px #d0d8ff,
+  
+      /* right arm */
+      4px 0px 0 0px #ffffff,
+      8px 0px 0 0px #d0d8ff,
+  
+      /* diagonals — short */
+      -3px -3px 0 0px #e8eeff,
+      3px -3px 0 0px #e8eeff,
+      -3px  3px 0 0px #e8eeff,
+      3px  3px 0 0px #e8eeff,
+  
+      /* glow layers */
+      0px 0px 4px 3px rgba(255, 255, 255, 0.6),
+      0px 0px 8px 5px rgba(200, 210, 255, 0.3),
+      0px 0px 16px 8px rgba(180, 200, 255, 0.15);
+  
+    animation: starPulse 3s ease-in-out infinite;
+  }
+  
+  /* ── OUTER GLOW RING ────────────────────────── */
+  .star-ring {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    animation: ringPulse 3s ease-in-out infinite;
+  }
+  
+  /* ── CLICK BURST ────────────────────────────── */
+  .star-glow-burst .star-core {
+    box-shadow:
+      0px 0px 0 1px #ffffff,
+      0px -4px 0 0px #ffffff,
+      0px -8px 0 0px #ffffff,
+      0px 4px 0 0px #ffffff,
+      0px 8px 0 0px #ffffff,
+      -4px 0px 0 0px #ffffff,
+      -8px 0px 0 0px #ffffff,
+      4px 0px 0 0px #ffffff,
+      8px 0px 0 0px #ffffff,
+      -3px -3px 0 0px #ffffff,
+      3px -3px 0 0px #ffffff,
+      -3px  3px 0 0px #ffffff,
+      3px  3px 0 0px #ffffff,
+      /* intense white burst */
+      0px 0px 6px 5px rgba(255, 255, 255, 0.9),
+      0px 0px 16px 8px rgba(255, 255, 255, 0.5),
+      0px 0px 30px 12px rgba(200, 220, 255, 0.3);
+  }
+  
+  /* ── HOVER SPARKLE ──────────────────────────── */
+  .star-letter:hover .star-core::before {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.6);
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .star-letter:hover .star-core::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.6);
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  /* ── ANIMATIONS ─────────────────────────────── */
+  @keyframes starPulse {
+    0%   { opacity: 0.5; transform: scale(0.85); }
+    50%  { opacity: 1;   transform: scale(1.1);  }
+    100% { opacity: 0.5; transform: scale(0.85); }
+  }
+  
+  @keyframes ringPulse {
+    0%   { opacity: 0;   transform: scale(0.7); }
+    50%  { opacity: 0.3; transform: scale(1.3); }
+    100% { opacity: 0;   transform: scale(0.7); }
+  }

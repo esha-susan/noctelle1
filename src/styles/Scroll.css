@@ -259,4 +259,39 @@
       transform: scaleY(1);
     }
   }
+  .letter-viewer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(3px);
+  }
   
+  .letter-viewer-scroll {
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    image-rendering: pixelated;
+    animation: unrollScroll 0.4s ease forwards;
+    filter: drop-shadow(0 12px 40px rgba(0,0,0,0.8));
+  }
+  
+  .viewer-body {
+    min-height: 200px;
+  }
+  
+  .viewer-message {
+    font-size: 0.88rem;
+    color: #3d1f00;
+    line-height: 1.8;
+    font-style: italic;
+    white-space: pre-wrap;
+    flex: 1;
+  }
