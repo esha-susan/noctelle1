@@ -6,6 +6,7 @@ import Scroll from "./components/Scroll"
 import Star from "./components/Star"
 import AuthModal from "./components/AuthModal"
 import LoadingScreen from "./components/LoadingScreen"
+
 function App() {
   const [stars, setStars] = useState([])
   const [selectedStar, setSelectedStar] = useState(null)
@@ -13,10 +14,9 @@ function App() {
   const [user, setUser] = useState(null)
   const [showAuth, setShowAuth] = useState(false)
   const [appReady, setAppReady] = useState(false)
+  const [skyMode, setSkyMode] = useState("public")
 
   useEffect(() => {
-    fetchLetters()
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
     })
@@ -30,18 +30,45 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    fetchLetters()
+  }, [skyMode, user])
+
   const fetchLetters = async () => {
     setLoading(true)
-    const { data, error } = await supabase
-      .from("letters")
-      .select("*")
-      .eq("is_private", false)
+    setStars([])
 
-    if (error) {
-      console.error("Error fetching letters:", error.message)
+    if (skyMode === "public") {
+      const { data, error } = await supabase
+        .from("letters")
+        .select("*")
+        .eq("is_private", false)
+
+      if (error) {
+        console.error("Error fetching public letters:", error.message)
+      } else {
+        setStars(data)
+      }
+
     } else {
-      setStars(data)
+      if (!user) {
+        setLoading(false)
+        return
+      }
+
+      const { data, error } = await supabase
+        .from("letters")
+        .select("*")
+        .eq("is_private", true)
+        .eq("user_id", user.id)
+
+      if (error) {
+        console.error("Error fetching private letters:", error.message)
+      } else {
+        setStars(data)
+      }
     }
+
     setLoading(false)
   }
 
@@ -65,7 +92,11 @@ function App() {
       return
     }
 
-    if (!letter.isPrivate) {
+    const isCurrentMode =
+      (skyMode === "public" && !letter.isPrivate) ||
+      (skyMode === "private" && letter.isPrivate)
+
+    if (isCurrentMode) {
       setStars((prevStars) => [...prevStars, data])
     }
   }
@@ -106,6 +137,11 @@ function App() {
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
+    setSkyMode("public")
+  }
+
+  const toggleSkyMode = () => {
+    setSkyMode((prev) => prev === "public" ? "private" : "public")
   }
 
   return (
@@ -116,6 +152,7 @@ function App() {
       <Sky />
       <MusicPlayer />
 
+      {/* top left — auth */}
       <div className="top-bar">
         {user ? (
           <div className="user-info">
@@ -125,15 +162,32 @@ function App() {
             </button>
           </div>
         ) : (
-          <button
-            className="signin-btn"
-            onClick={() => setShowAuth(true)}
-          >
+          <button className="signin-btn" onClick={() => setShowAuth(true)}>
             ✦ enter
           </button>
         )}
       </div>
 
+      {/* sky mode toggle — only when logged in */}
+      {user && (
+        <div className="sky-toggle-wrap">
+          <button
+            className={`sky-toggle-btn ${skyMode === "public" ? "active" : ""}`}
+            onClick={() => setSkyMode("public")}
+          >
+            ✦ public sky
+          </button>
+          <span className="sky-toggle-divider">·</span>
+          <button
+            className={`sky-toggle-btn ${skyMode === "private" ? "active" : ""}`}
+            onClick={() => setSkyMode("private")}
+          >
+            ✦ private sky
+          </button>
+        </div>
+      )}
+
+      {/* stars */}
       {appReady && !loading && stars.map((star) => (
         <Star
           key={star.id}
@@ -142,6 +196,16 @@ function App() {
         />
       ))}
 
+      {/* loading indicator when switching modes */}
+      {appReady && loading && (
+        <div className="sky-loading">
+          <span className="sky-loading-dot d1">✦</span>
+          <span className="sky-loading-dot d2">✦</span>
+          <span className="sky-loading-dot d3">✦</span>
+        </div>
+      )}
+
+      {/* letter viewer */}
       {selectedStar && (
         <div className="letter-viewer-overlay">
           <div className="letter-viewer-scroll">
@@ -152,12 +216,14 @@ function App() {
               <p className="scroll-label">✦ {selectedStar.title} ✦</p>
               <p className="viewer-message">{selectedStar.message}</p>
               <div className="viewer-footer">
-                <button
-                  className="glow-btn"
-                  onClick={() => handleGlow(selectedStar)}
-                >
-                  ✦ glow ({selectedStar.glow_count})
-                </button>
+                {skyMode === "public" && (
+                  <button
+                    className="glow-btn"
+                    onClick={() => handleGlow(selectedStar)}
+                  >
+                    ✦ glow ({selectedStar.glow_count})
+                  </button>
+                )}
                 <button className="close-btn" onClick={handleCloseViewer}>
                   close
                 </button>
