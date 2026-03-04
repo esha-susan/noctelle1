@@ -1,0 +1,262 @@
+.write-btn {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    padding: 10px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+    z-index: 50;
+  }
+  
+  .write-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  
+  .scroll-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(3px);
+  }
+  
+  /* ── SCROLL SHELL ───────────────────────────── */
+  .scroll-container {
+    width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    image-rendering: pixelated;
+    animation: unrollScroll 0.4s ease forwards;
+    filter: drop-shadow(0 8px 32px rgba(0,0,0,0.7));
+  }
+  
+  /* ── TOP ROLL ───────────────────────────────── */
+  .scroll-top-roll {
+    position: relative;
+    height: 48px;
+    background: #c8922a;
+    border: 3px solid #7a4e1a;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+  
+  .scroll-top-roll::before,
+  .scroll-top-roll::after {
+    content: '';
+    width: 36px;
+    height: 36px;
+    background: #e8a835;
+    border: 3px solid #7a4e1a;
+    border-radius: 3px;
+    box-shadow:
+      inset 2px 2px 0 #f0c060,
+      inset -2px -2px 0 #a06820;
+  }
+  
+  .scroll-top-roll .roll-bar {
+    flex: 1;
+    height: 16px;
+    margin: 0 4px;
+    background: #e8a835;
+    border-top: 3px solid #f0c060;
+    border-bottom: 3px solid #a06820;
+  }
+  
+  /* ── PARCHMENT BODY ─────────────────────────── */
+  .scroll-body {
+    background: #f2d98a;
+    border-left: 3px solid #7a4e1a;
+    border-right: 3px solid #7a4e1a;
+    padding: 24px 32px 20px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow:
+      inset 4px 0 0 #e8c870,
+      inset -4px 0 0 #e8c870,
+      inset 0 4px 0 #e8c870;
+  }
+  
+  /* ── BOTTOM ROLL ────────────────────────────── */
+  .scroll-bottom-roll {
+    position: relative;
+    height: 48px;
+    background: #c8922a;
+    border: 3px solid #7a4e1a;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+  
+  .scroll-bottom-roll::before,
+  .scroll-bottom-roll::after {
+    content: '';
+    width: 36px;
+    height: 36px;
+    background: #e8a835;
+    border: 3px solid #7a4e1a;
+    border-radius: 3px;
+    box-shadow:
+      inset 2px 2px 0 #f0c060,
+      inset -2px -2px 0 #a06820;
+  }
+  
+  .scroll-bottom-roll .roll-bar {
+    flex: 1;
+    height: 16px;
+    margin: 0 4px;
+    background: #e8a835;
+    border-top: 3px solid #f0c060;
+    border-bottom: 3px solid #a06820;
+  }
+  
+  /* ── PARCHMENT STRIPE DETAIL ────────────────── */
+  .scroll-body::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 28px,
+      rgba(180, 140, 60, 0.12) 28px,
+      rgba(180, 140, 60, 0.12) 29px
+    );
+  }
+  
+  /* ── TEXT ELEMENTS ──────────────────────────── */
+  .scroll-label {
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: #7a4e1a;
+    text-transform: lowercase;
+    font-weight: bold;
+  }
+  
+  .scroll-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #c4a040;
+    padding: 5px 2px;
+    font-size: 0.9rem;
+    color: #3d2b1f;
+    outline: none;
+    font-family: inherit;
+    width: 100%;
+  }
+  
+  .scroll-input::placeholder {
+    color: #b89060;
+    font-size: 0.8rem;
+  }
+  
+  .scroll-textarea {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #c4a040;
+    padding: 5px 2px;
+    font-size: 0.85rem;
+    color: #3d2b1f;
+    outline: none;
+    resize: none;
+    height: 130px;
+    font-family: inherit;
+    line-height: 1.7;
+    width: 100%;
+  }
+  
+  .scroll-textarea::placeholder {
+    color: #b89060;
+    font-size: 0.8rem;
+  }
+  
+  .privacy-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: #7a4e1a;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  
+  .scroll-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+  
+  .send-btn {
+    background: #7a4e1a;
+    border: 2px solid #4a2e0a;
+    color: #f2d98a;
+    padding: 7px 18px;
+    font-size: 0.78rem;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.2s ease;
+    image-rendering: pixelated;
+    box-shadow: 2px 2px 0 #4a2e0a;
+  }
+  
+  .send-btn:hover {
+    background: #5a3a0e;
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #4a2e0a;
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: #a07830;
+    font-size: 0.72rem;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+  }
+  
+  .close-btn:hover {
+    color: #7a4e1a;
+  }
+  
+  @keyframes unrollScroll {
+    from {
+      opacity: 0;
+      transform: scaleY(0.3);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+  
