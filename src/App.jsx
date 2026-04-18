@@ -8,6 +8,9 @@ import AuthModal from "./components/AuthModal"
 import LoadingScreen from "./components/LoadingScreen"
 import Envelope from "./components/Envelope"
 import SkyChooser from "./components/SkyChooser"
+import Constellation from "./components/Constellation"
+import ConstellationViewer from "./components/ConstellationViewer"
+import { buildConstellations } from "./utils/clustering"
 
 function App() {
   const [stars, setStars] = useState([])
@@ -20,17 +23,20 @@ function App() {
   const [skyMode, setSkyMode] = useState("public")
   const [showEnvelope, setShowEnvelope] = useState(false)
   const [pendingStarPos, setPendingStarPos] = useState({ x: 50, y: 20 })
+  const [selectedConstellation, setSelectedConstellation] = useState(null)
+
+  const constellations = buildConstellations(stars)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
 
     return () => subscription.unsubscribe()
   }, [])
@@ -49,12 +55,7 @@ function App() {
         .select("*")
         .eq("is_private", false)
 
-      if (error) {
-        console.error("Error fetching public letters:", error.message)
-      } else {
-        setStars(data)
-      }
-
+      if (!error) setStars(data || [])
     } else {
       if (!user) {
         setLoading(false)
@@ -67,11 +68,7 @@ function App() {
         .eq("is_private", true)
         .eq("user_id", user.id)
 
-      if (error) {
-        console.error("Error fetching private letters:", error.message)
-      } else {
-        setStars(data)
-      }
+      if (!error) setStars(data || [])
     }
 
     setLoading(false)
@@ -83,20 +80,21 @@ function App() {
 
     const { data, error } = await supabase
       .from("letters")
-      .insert([{
-        title: letter.title,
-        message: letter.message,
-        is_private: letter.isPrivate,
-        x: letter.x,
-        y: letter.y,
-        glow_count: 0,
-        user_id: user ? user.id : null
-      }])
+      .insert([
+        {
+          title: letter.title,
+          message: letter.message,
+          is_private: letter.isPrivate,
+          x: letter.x,
+          y: letter.y,
+          glow_count: 0,
+          user_id: user ? user.id : null,
+        },
+      ])
       .select()
       .single()
 
     if (error) {
-      console.error("Error saving letter:", error.message)
       setShowEnvelope(false)
       return
     }
@@ -111,16 +109,14 @@ function App() {
   }
 
   const handleStarReveal = () => {
-    setStars((prevStars) => [...prevStars, ...pendingStars])
-    setPendingStars([])
+    setPendingStars((pending) => {
+      setStars((prev) => [...prev, ...pending])
+      return []
+    })
   }
 
   const handleStarClick = (star) => {
     setSelectedStar(star)
-  }
-
-  const handleCloseViewer = () => {
-    setSelectedStar(null)
   }
 
   const handleGlow = async (star) => {
@@ -129,13 +125,10 @@ function App() {
       .update({ glow_count: star.glow_count + 1 })
       .eq("id", star.id)
 
-    if (error) {
-      console.error("Error updating glow:", error.message)
-      return
-    }
+    if (error) return
 
-    setStars((prevStars) =>
-      prevStars.map((s) =>
+    setStars((prev) =>
+      prev.map((s) =>
         s.id === star.id
           ? { ...s, glow_count: s.glow_count + 1 }
           : s
@@ -144,7 +137,7 @@ function App() {
 
     setSelectedStar((prev) => ({
       ...prev,
-      glow_count: prev.glow_count + 1
+      glow_count: prev.glow_count + 1,
     }))
   }
 
@@ -152,6 +145,7 @@ function App() {
     const confirmed = window.confirm(
       "are you sure you want to remove this star from the sky?"
     )
+
     if (!confirmed) return
 
     const { error } = await supabase
@@ -159,14 +153,9 @@ function App() {
       .delete()
       .eq("id", star.id)
 
-    if (error) {
-      console.error("Error deleting letter:", error.message)
-      return
-    }
+    if (error) return
 
-    setStars((prevStars) =>
-      prevStars.filter((s) => s.id !== star.id)
-    )
+    setStars((prev) => prev.filter((s) => s.id !== star.id))
     setSelectedStar(null)
   }
 
@@ -184,86 +173,110 @@ function App() {
       <Sky />
       <MusicPlayer />
 
-      {/* top left — auth */}
+      {/* top bar */}
       <div className="top-bar">
         {user ? (
           <div className="user-info">
             <span className="user-email">{user.email}</span>
-            <button className="signout-btn" onClick={handleSignOut}>
+
+            <button
+              className="signout-btn"
+              onClick={handleSignOut}
+            >
               leave
             </button>
           </div>
         ) : (
-          <button className="signin-btn" onClick={() => setShowAuth(true)}>
+          <button
+            className="signin-btn"
+            onClick={() => setShowAuth(true)}
+          >
             ✦ enter
           </button>
         )}
       </div>
 
-      {/* stars */}
-      {appReady && !loading && stars.map((star) => (
-        <Star
-          key={star.id}
-          star={star}
-          onStarClick={handleStarClick}
-        />
-      ))}
+      {/* constellations */}
+      {appReady &&
+        !loading &&
+        constellations.map((cluster) => (
+          <Constellation
+            key={cluster.id}
+            cluster={cluster}
+            onClick={setSelectedConstellation}
+          />
+        ))}
 
-      {/* loading indicator */}
-      {appReady && loading && (
-        <div className="sky-loading">
-          <span className="sky-loading-dot d1">✦</span>
-          <span className="sky-loading-dot d2">✦</span>
-          <span className="sky-loading-dot d3">✦</span>
-        </div>
+      {/* stars */}
+      {appReady &&
+        !loading &&
+        stars.map((star) => (
+          <Star
+            key={star.id}
+            star={star}
+            onStarClick={handleStarClick}
+          />
+        ))}
+
+      {/* constellation viewer */}
+      {selectedConstellation && (
+        <ConstellationViewer
+          cluster={selectedConstellation}
+          onStarClick={handleStarClick}
+          onClose={() => setSelectedConstellation(null)}
+          skyMode={skyMode}
+        />
       )}
 
-      {/* letter viewer */}
-      {selectedStar && (
-        <div className="letter-viewer-overlay">
-          <div className="letter-viewer-scroll">
-            <img
-              className="scroll-bg-img"
-              src="/scroll-bg.png"
-              alt="scroll"
-            />
-            <div className="viewer-content">
-              <p className="viewer-title">✦ {selectedStar.title} ✦</p>
-              <p className="viewer-message">{selectedStar.message}</p>
-              <div className="viewer-footer">
-                {skyMode === "public" && (
-                  <button
-                    className="glow-btn"
-                    onClick={() => handleGlow(selectedStar)}
-                  >
-                    ✦ glow ({selectedStar.glow_count})
-                  </button>
-                )}
-                <div className="viewer-right-actions">
-                  {user && selectedStar.user_id === user.id && (
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(selectedStar)}
-                    >
-                      ✦ delete
-                    </button>
-                  )}
-                  <button className="close-btn" onClick={handleCloseViewer}>
-                    close
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* selected star viewer */}
+{selectedStar && (
+  <div className="letter-viewer-overlay">
+    <div className="letter-viewer-scroll">
+      <img
+        className="scroll-bg-img"
+        src="/scroll-bg.png"
+        alt="scroll"
+      />
+      <div className="viewer-content">
+        <p className="viewer-title">✦ {selectedStar.title} ✦</p>
+        <p className="viewer-message">{selectedStar.message}</p>
+        <div className="viewer-footer">
+          {skyMode === "public" && (
+            <button
+              className="glow-btn"
+              onClick={() => handleGlow(selectedStar)}
+            >
+              ✦ glow ({selectedStar.glow_count})
+            </button>
+          )}
+          <div className="viewer-right-actions">
+            {user && selectedStar.user_id === user.id && (
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(selectedStar)}
+              >
+                ✦ delete
+              </button>
+            )}
+            <button
+              className="close-btn"
+              onClick={() => setSelectedStar(null)}
+            >
+              close
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
 
-      {/* auth modal */}
+      {/* auth */}
       {showAuth && (
         <AuthModal onClose={() => setShowAuth(false)} />
       )}
 
-      {/* envelope animation */}
+      {/* envelope */}
       {showEnvelope && (
         <Envelope
           onComplete={() => setShowEnvelope(false)}
@@ -273,7 +286,7 @@ function App() {
         />
       )}
 
-      {/* sky chooser — above write button */}
+      {/* sky chooser */}
       <SkyChooser
         skyMode={skyMode}
         setSkyMode={setSkyMode}
@@ -281,9 +294,11 @@ function App() {
         onAuthRequired={() => setShowAuth(true)}
       />
 
-      {/* write button */}
-      <Scroll onSend={handleSend} isPrivate={skyMode === "private"} />
-
+      {/* write scroll */}
+      <Scroll
+        onSend={handleSend}
+        isPrivate={skyMode === "private"}
+      />
     </div>
   )
 }

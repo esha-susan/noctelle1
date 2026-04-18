@@ -1,0 +1,48 @@
+/* ── LABEL ──────────────────────────────────── */
+.constellation-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .constellation-name {
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.0);
+    letter-spacing: 0.2em;
+    text-transform: lowercase;
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(200, 180, 255, 0.6);
+    transition: all 0.4s ease;
+    user-select: none;
+  }
+  
+  .constellation-label:hover .constellation-name {
+    color: rgba(200, 180, 255, 0.7);
+  }
+  
+  /* ── HOVER GLOW AREA ────────────────────────── */
+  .constellation-label::before {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(180, 150, 255, 0.06) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  
+  .constellation-label:hover::before {
+    opacity: 1;
+  }

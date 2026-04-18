@@ -1,158 +1,84 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+/* ===========================
+GLOBAL CSS (main/index.css)
+=========================== */
 
-  #root{
-    width:100%;
-    height:100vh
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
-  body {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #0d0d1a;
-  }
-  
-  .app-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-  
-  .background-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('/background.png');
-    background-size: cover;
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-  }
-  .top-bar {
-    position: absolute;
-    top: 20px;
-    left: 24px;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .signin-btn {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.78rem;
-    padding: 7px 18px;
-    border-radius: 20px;
-    cursor: pointer;
-    letter-spacing: 0.1em;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(4px);
-  }
-  
-  .signin-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .user-email {
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.5);
-    letter-spacing: 0.06em;
-  }
-  
-  .signout-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 0.7rem;
-    cursor: pointer;
-    letter-spacing: 0.08em;
-    transition: color 0.2s ease;
-  }
-  
-  .signout-btn:hover {
-    color: rgba(255, 255, 255, 0.8);
-  }
-  /* ── SKY MODE TOGGLE ────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0d0d1a;
+}
+
+.app-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.background-layer {
+  position: absolute;
+  inset: 0;
+  background-image: url("/background.png");
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.top-bar {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.signin-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.8);
+  font-size: 0.78rem;
+  padding: 7px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-email {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.signout-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+}
+
 .sky-toggle-wrap {
   position: absolute;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 10px;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 6px 16px;
-  backdrop-filter: blur(6px);
-}
-
-.sky-toggle-btn {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 2px 4px;
-}
-
-.sky-toggle-btn.active {
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow:
-    0 0 8px rgba(255, 255, 255, 0.6),
-    0 0 20px rgba(200, 180, 255, 0.4);
-}
-
-.sky-toggle-btn:hover {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.sky-toggle-divider {
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 0.8rem;
-}
-
-/* ── SKY LOADING INDICATOR ──────────────────── */
-.sky-loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  gap: 12px;
-  z-index: 50;
-}
-
-.sky-loading-dot {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.8rem;
-  animation: skyLoadBlink 1.2s ease-in-out infinite;
-}
-
-.d1 { animation-delay: 0s;    }
-.d2 { animation-delay: 0.2s;  }
-.d3 { animation-delay: 0.4s;  }
-
-@keyframes skyLoadBlink {
-  0%   { opacity: 0.1; }
-  50%  { opacity: 0.8; }
-  100% { opacity: 0.1; }
 }

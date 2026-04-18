@@ -1,0 +1,100 @@
+/* ── OVERLAY ────────────────────────────────── */
+.cv-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 2, 16, 0.92);
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    animation: cvReveal 0.5s ease forwards;
+    backdrop-filter: blur(8px);
+  }
+  
+  @keyframes cvReveal {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* ── HEADER ─────────────────────────────────── */
+  .cv-header {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+  }
+  
+  .cv-name {
+    font-size: 0.75rem;
+    color: rgba(200, 180, 255, 0.8);
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
+    font-family: 'Courier New', monospace;
+    text-shadow:
+      0 0 12px rgba(180, 140, 255, 0.6),
+      0 0 30px rgba(160, 120, 255, 0.3);
+  }
+  
+  .cv-count {
+    font-size: 0.58rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.15em;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .cv-close {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.62rem;
+    padding: 4px 12px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    font-family: 'Courier New', monospace;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+  
+  .cv-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  
+  /* ── SKY ────────────────────────────────────── */
+  .cv-sky {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* decorative background dots */
+  .cv-bg-stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.1)  0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 20%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 55%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 30%, rgba(255,255,255,0.1)  0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.1)  0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,0.08) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  
+  /* ── SVG LINES ──────────────────────────────── */
+  .cv-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
