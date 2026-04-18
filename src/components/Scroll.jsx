@@ -1,36 +1,30 @@
 import { useState } from "react"
 import "../styles/Scroll.css"
 
-function Scroll({ onSend }) {
+function Scroll({ onSend, isPrivate }) {
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
-  const [isPrivate, setIsPrivate] = useState(false)
 
-  const openScroll = () => {
-    setIsOpen(true)
-  }
+  const openScroll = () => setIsOpen(true)
 
   const closeScroll = () => {
     setIsOpen(false)
     setTitle("")
     setMessage("")
-    setIsPrivate(false)
   }
 
   const handleSend = () => {
     if (title.trim() === "" || message.trim() === "") return
-
     onSend({
       title,
       message,
       isPrivate,
       id: Date.now(),
-      x: Math.random() * 80 + 10,
-      y: Math.random() * 50 + 5,
+      x: Math.random() * 70 + 10,
+      y: Math.random() * 45 + 5,
       glowCount: 0
     })
-
     closeScroll()
   }
 
@@ -43,13 +37,16 @@ function Scroll({ onSend }) {
       {isOpen && (
         <div className="scroll-overlay">
           <div className="scroll-container">
+            <img
+              className="scroll-bg-img"
+              src="/scroll-bg.png"
+              alt="scroll"
+            />
+            <div className="scroll-content">
 
-            <div className="scroll-top-roll">
-              <div className="roll-bar" />
-            </div>
-
-            <div className="scroll-body">
-              <p className="scroll-label">a letter to the sky</p>
+              <p className="scroll-label">
+                {isPrivate ? "✦ private sky" : "✦ public sky"}
+              </p>
 
               <input
                 className="scroll-input"
@@ -61,38 +58,25 @@ function Scroll({ onSend }) {
               />
 
               <textarea
-                className="scroll-textarea"
-                placeholder="write what your heart carries..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                maxLength={300}
+              className="scroll-textarea"
+              placeholder="write what your heart carries..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              maxLength={160}
               />
-
-              <div className="scroll-options">
-                <label className="privacy-label">
-                  <input
-                    type="checkbox"
-                    checked={isPrivate}
-                    onChange={(e) => setIsPrivate(e.target.checked)}
-                  />
-                  private sky
-                </label>
+              <p className="char-counter">{message.length}/160</p>
+              <div className="scroll-bottom-row">
+                <div className="scroll-actions">
+                  <button className="send-btn" onClick={handleSend}>
+                    ✦ send to sky
+                  </button>
+                  <button className="close-btn" onClick={closeScroll}>
+                    close
+                  </button>
+                </div>
               </div>
 
-              <div className="scroll-actions">
-                <button className="send-btn" onClick={handleSend}>
-                  ✦ send to sky
-                </button>
-                <button className="close-btn" onClick={closeScroll}>
-                  close
-                </button>
-              </div>
             </div>
-
-            <div className="scroll-bottom-roll">
-              <div className="roll-bar" />
-            </div>
-
           </div>
         </div>
       )}

@@ -1,60 +1,68 @@
-import {useState} from 'react'
-import {supabase} from '../supabase'
-import '../styles/AuthModal.css'
+import { useState } from "react"
+import { supabase } from "../supabase"
+import "../styles/AuthModal.css"
 
-function AuthModal({onClose}){
-const[mode,setMode]=useState("signin")
-const[email,setEmail]=useState("")
-const[password,setPassword]=useState("")
-const[error,setError]=useState("")
-const[loading,setLoading]=useState(false)
+function AuthModal({ onClose }) {
+  const [mode, setMode] = useState("signin")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
-const handleSubmit=async()=>{
+  const handleSubmit = async () => {
     setError("")
     setLoading(true)
 
-    if(mode==="signin"){
-        const { error }=await supabase.auth.signInWithPassword({
-            email,
-            password
-        })
-        if (error){
-            setError(error.message)
-        }
-        else{
-            onClose()
-        }
-        
+    if (mode === "signin") {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        onClose()
+      }
+    } else {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        onClose()
+      }
     }
-    else{
-        const {error}= await supabase.auth.signUp({
-            email,
-            password
-        })
-        if (error){
-            setError(error.message)
-        }
-        else{
-            onClose()
-        }
-    }
+
     setLoading(false)
-}
-return (
+  }
+
+  return (
     <div className="auth-overlay">
       <div className="auth-container">
 
-        <div className="scroll-top-roll">
-          <div className="roll-bar" />
+        {/* pixel window title bar */}
+        <div className="auth-titlebar">
+          <div className="auth-titlebar-dots">
+            <div className="auth-dot" />
+            <div className="auth-dot" />
+            <div className="auth-dot" />
+          </div>
+          <span className="auth-titlebar-text">
+            {mode === "signin" ? "noctelle — sign in" : "noctelle — join"}
+          </span>
+          <div style={{ width: "42px" }} />
         </div>
 
-        <div className="scroll-body auth-body">
-          <p className="scroll-label">
+        {/* body */}
+        <div className="auth-body">
+          <p className="auth-label">
             {mode === "signin" ? "welcome back" : "join the sky"}
           </p>
 
           <input
-            className="scroll-input"
+            className="auth-input"
             type="email"
             placeholder="your email..."
             value={email}
@@ -62,7 +70,7 @@ return (
           />
 
           <input
-            className="scroll-input"
+            className="auth-input"
             type="password"
             placeholder="your password..."
             value={password}
@@ -75,7 +83,7 @@ return (
 
           <div className="auth-actions">
             <button
-              className="send-btn"
+              className="auth-submit-btn"
               onClick={handleSubmit}
               disabled={loading}
             >
@@ -85,7 +93,7 @@ return (
                 ? "✦ enter"
                 : "✦ begin"}
             </button>
-            <button className="close-btn" onClick={onClose}>
+            <button className="auth-close-btn" onClick={onClose}>
               close
             </button>
           </div>
@@ -106,12 +114,12 @@ return (
           </p>
         </div>
 
-        <div className="scroll-bottom-roll">
-          <div className="roll-bar" />
-        </div>
+        {/* pixel bottom bar */}
+        <div className="auth-footer-bar" />
 
       </div>
     </div>
   )
 }
+
 export default AuthModal

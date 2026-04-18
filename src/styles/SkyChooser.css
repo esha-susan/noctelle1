@@ -1,0 +1,95 @@
+.sky-chooser {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 10px 20px;
+    backdrop-filter: blur(6px);
+  }
+  
+  /* ── EACH CHOICE ────────────────────────────── */
+  .sky-choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    opacity: 0.45;
+  }
+  
+  .sky-choice:hover {
+    opacity: 0.75;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .sky-choice.chosen {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+  }
+  
+  /* ── ICON ───────────────────────────────────── */
+  .sky-choice-icon {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+  }
+  
+  .sky-choice.chosen .sky-choice-icon {
+    color: #ffffff;
+    text-shadow:
+      0 0 8px rgba(255, 255, 255, 0.8),
+      0 0 20px rgba(200, 180, 255, 0.5);
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes iconPulse {
+    0%   { text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 20px rgba(200,180,255,0.5); }
+    50%  { text-shadow: 0 0 14px rgba(255,255,255,1),  0 0 35px rgba(200,180,255,0.8); }
+    100% { text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 20px rgba(200,180,255,0.5); }
+  }
+  
+  /* ── TEXT ───────────────────────────────────── */
+  .sky-choice-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  
+  .sky-choice-title {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.12em;
+    text-transform: lowercase;
+  }
+  
+  .sky-choice.chosen .sky-choice-title {
+    color: #ffffff;
+  }
+  
+  .sky-choice-sub {
+    font-size: 0.58rem;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+  }
+  
+  .sky-choice.chosen .sky-choice-sub {
+    color: rgba(255, 255, 255, 0.55);
+  }
+  
+  /* ── DIVIDER ────────────────────────────────── */
+  .sky-choice-divider {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 1rem;
+    user-select: none;
+  }

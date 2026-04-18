@@ -6,15 +6,20 @@ import Scroll from "./components/Scroll"
 import Star from "./components/Star"
 import AuthModal from "./components/AuthModal"
 import LoadingScreen from "./components/LoadingScreen"
+import Envelope from "./components/Envelope"
+import SkyChooser from "./components/SkyChooser"
 
 function App() {
   const [stars, setStars] = useState([])
+  const [pendingStars, setPendingStars] = useState([])
   const [selectedStar, setSelectedStar] = useState(null)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const [showAuth, setShowAuth] = useState(false)
   const [appReady, setAppReady] = useState(false)
   const [skyMode, setSkyMode] = useState("public")
+  const [showEnvelope, setShowEnvelope] = useState(false)
+  const [pendingStarPos, setPendingStarPos] = useState({ x: 50, y: 20 })
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -73,6 +78,9 @@ function App() {
   }
 
   const handleSend = async (letter) => {
+    setPendingStarPos({ x: letter.x, y: letter.y })
+    setShowEnvelope(true)
+
     const { data, error } = await supabase
       .from("letters")
       .insert([{
@@ -89,6 +97,7 @@ function App() {
 
     if (error) {
       console.error("Error saving letter:", error.message)
+      setShowEnvelope(false)
       return
     }
 
@@ -97,8 +106,13 @@ function App() {
       (skyMode === "private" && letter.isPrivate)
 
     if (isCurrentMode) {
-      setStars((prevStars) => [...prevStars, data])
+      setPendingStars((prev) => [...prev, data])
     }
+  }
+
+  const handleStarReveal = () => {
+    setStars((prevStars) => [...prevStars, ...pendingStars])
+    setPendingStars([])
   }
 
   const handleStarClick = (star) => {
@@ -134,14 +148,32 @@ function App() {
     }))
   }
 
+  const handleDelete = async (star) => {
+    const confirmed = window.confirm(
+      "are you sure you want to remove this star from the sky?"
+    )
+    if (!confirmed) return
+
+    const { error } = await supabase
+      .from("letters")
+      .delete()
+      .eq("id", star.id)
+
+    if (error) {
+      console.error("Error deleting letter:", error.message)
+      return
+    }
+
+    setStars((prevStars) =>
+      prevStars.filter((s) => s.id !== star.id)
+    )
+    setSelectedStar(null)
+  }
+
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
     setSkyMode("public")
-  }
-
-  const toggleSkyMode = () => {
-    setSkyMode((prev) => prev === "public" ? "private" : "public")
   }
 
   return (
@@ -168,25 +200,6 @@ function App() {
         )}
       </div>
 
-      {/* sky mode toggle — only when logged in */}
-      {user && (
-        <div className="sky-toggle-wrap">
-          <button
-            className={`sky-toggle-btn ${skyMode === "public" ? "active" : ""}`}
-            onClick={() => setSkyMode("public")}
-          >
-            ✦ public sky
-          </button>
-          <span className="sky-toggle-divider">·</span>
-          <button
-            className={`sky-toggle-btn ${skyMode === "private" ? "active" : ""}`}
-            onClick={() => setSkyMode("private")}
-          >
-            ✦ private sky
-          </button>
-        </div>
-      )}
-
       {/* stars */}
       {appReady && !loading && stars.map((star) => (
         <Star
@@ -196,7 +209,7 @@ function App() {
         />
       ))}
 
-      {/* loading indicator when switching modes */}
+      {/* loading indicator */}
       {appReady && loading && (
         <div className="sky-loading">
           <span className="sky-loading-dot d1">✦</span>
@@ -209,11 +222,13 @@ function App() {
       {selectedStar && (
         <div className="letter-viewer-overlay">
           <div className="letter-viewer-scroll">
-            <div className="scroll-top-roll">
-              <div className="roll-bar" />
-            </div>
-            <div className="scroll-body viewer-body">
-              <p className="scroll-label">✦ {selectedStar.title} ✦</p>
+            <img
+              className="scroll-bg-img"
+              src="/scroll-bg.png"
+              alt="scroll"
+            />
+            <div className="viewer-content">
+              <p className="viewer-title">✦ {selectedStar.title} ✦</p>
               <p className="viewer-message">{selectedStar.message}</p>
               <div className="viewer-footer">
                 {skyMode === "public" && (
@@ -224,23 +239,51 @@ function App() {
                     ✦ glow ({selectedStar.glow_count})
                   </button>
                 )}
-                <button className="close-btn" onClick={handleCloseViewer}>
-                  close
-                </button>
+                <div className="viewer-right-actions">
+                  {user && selectedStar.user_id === user.id && (
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(selectedStar)}
+                    >
+                      ✦ delete
+                    </button>
+                  )}
+                  <button className="close-btn" onClick={handleCloseViewer}>
+                    close
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="scroll-bottom-roll">
-              <div className="roll-bar" />
             </div>
           </div>
         </div>
       )}
 
+      {/* auth modal */}
       {showAuth && (
         <AuthModal onClose={() => setShowAuth(false)} />
       )}
 
-      <Scroll onSend={handleSend} />
+      {/* envelope animation */}
+      {showEnvelope && (
+        <Envelope
+          onComplete={() => setShowEnvelope(false)}
+          starX={pendingStarPos.x}
+          starY={pendingStarPos.y}
+          onStarReveal={handleStarReveal}
+        />
+      )}
+
+      {/* sky chooser — above write button */}
+      <SkyChooser
+        skyMode={skyMode}
+        setSkyMode={setSkyMode}
+        user={user}
+        onAuthRequired={() => setShowAuth(true)}
+      />
+
+      {/* write button */}
+      <Scroll onSend={handleSend} isPrivate={skyMode === "private"} />
+
     </div>
   )
 }
