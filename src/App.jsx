@@ -110,7 +110,11 @@ function App() {
 
   const handleStarReveal = () => {
     setPendingStars((pending) => {
-      setStars((prev) => [...prev, ...pending])
+      setStars((prev) => {
+        const existingIds = new Set(prev.map((s) => s.id))
+        const newOnes = pending.filter((s) => !existingIds.has(s.id))
+        return [...prev, ...newOnes]
+      })
       return []
     })
   }
@@ -129,9 +133,7 @@ function App() {
 
     setStars((prev) =>
       prev.map((s) =>
-        s.id === star.id
-          ? { ...s, glow_count: s.glow_count + 1 }
-          : s
+        s.id === star.id ? { ...s, glow_count: s.glow_count + 1 } : s
       )
     )
 
@@ -145,7 +147,6 @@ function App() {
     const confirmed = window.confirm(
       "are you sure you want to remove this star from the sky?"
     )
-
     if (!confirmed) return
 
     const { error } = await supabase
@@ -157,6 +158,7 @@ function App() {
 
     setStars((prev) => prev.filter((s) => s.id !== star.id))
     setSelectedStar(null)
+    setSelectedConstellation(null)
   }
 
   const handleSignOut = async () => {
@@ -178,19 +180,12 @@ function App() {
         {user ? (
           <div className="user-info">
             <span className="user-email">{user.email}</span>
-
-            <button
-              className="signout-btn"
-              onClick={handleSignOut}
-            >
+            <button className="signout-btn" onClick={handleSignOut}>
               leave
             </button>
           </div>
         ) : (
-          <button
-            className="signin-btn"
-            onClick={() => setShowAuth(true)}
-          >
+          <button className="signin-btn" onClick={() => setShowAuth(true)}>
             ✦ enter
           </button>
         )}
@@ -211,11 +206,7 @@ function App() {
       {appReady &&
         !loading &&
         stars.map((star) => (
-          <Star
-            key={star.id}
-            star={star}
-            onStarClick={handleStarClick}
-          />
+          <Star key={star.id} star={star} onStarClick={handleStarClick} />
         ))}
 
       {/* constellation viewer */}
@@ -229,52 +220,65 @@ function App() {
       )}
 
       {/* selected star viewer */}
-{selectedStar && (
-  <div className="letter-viewer-overlay">
-    <div className="letter-viewer-scroll">
-      <img
-        className="scroll-bg-img"
-        src="/scroll-bg.png"
-        alt="scroll"
-      />
-      <div className="viewer-content">
-        <p className="viewer-title">✦ {selectedStar.title} ✦</p>
-        <p className="viewer-message">{selectedStar.message}</p>
-        <div className="viewer-footer">
-          {skyMode === "public" && (
-            <button
-              className="glow-btn"
-              onClick={() => handleGlow(selectedStar)}
-            >
-              ✦ glow ({selectedStar.glow_count})
-            </button>
-          )}
-          <div className="viewer-right-actions">
-            {user && selectedStar.user_id === user.id && (
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(selectedStar)}
-              >
-                ✦ delete
-              </button>
-            )}
-            <button
-              className="close-btn"
-              onClick={() => setSelectedStar(null)}
-            >
-              close
-            </button>
+      {selectedStar && (
+        <div className="letter-viewer-overlay">
+          <div
+            className="letter-viewer-scroll"
+            ref={(el) => {
+              if (!el) return
+              const update = () => {
+                const w = el.offsetWidth
+                const h = el.offsetHeight
+                const content = el.querySelector(".viewer-content")
+                if (!content) return
+                content.style.top        = h * 0.36 + "px"
+                content.style.left       = w * 0.22 + "px"
+                content.style.width      = w * (0.77 - 0.22) + "px"
+                content.style.height     = h * (0.77 - 0.36) + "px"
+                content.style.visibility = "visible"
+              }
+              const ro = new ResizeObserver(update)
+              ro.observe(el)
+              update()
+            }}
+          >
+            <img className="scroll-bg-img" src="/scroll-bg.png" alt="scroll" />
+            <div className="viewer-content" style={{ visibility: "hidden" }}>
+              <p className="viewer-title">✦ {selectedStar.title} ✦</p>
+              <p className="viewer-message">{selectedStar.message}</p>
+              <div className="viewer-footer">
+                {skyMode === "public" && (
+                  <button
+                    className="glow-btn"
+                    onClick={() => handleGlow(selectedStar)}
+                  >
+                    ✦ glow ({selectedStar.glow_count})
+                  </button>
+                )}
+                <div className="viewer-right-actions">
+                  {user && selectedStar.user_id === user.id && (
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(selectedStar)}
+                    >
+                      ✦ delete
+                    </button>
+                  )}
+                  <button
+                    className="close-btn"
+                    onClick={() => setSelectedStar(null)}
+                  >
+                    close
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
       {/* auth */}
-      {showAuth && (
-        <AuthModal onClose={() => setShowAuth(false)} />
-      )}
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
 
       {/* envelope */}
       {showEnvelope && (
@@ -295,10 +299,7 @@ function App() {
       />
 
       {/* write scroll */}
-      <Scroll
-        onSend={handleSend}
-        isPrivate={skyMode === "private"}
-      />
+      <Scroll onSend={handleSend} isPrivate={skyMode === "private"} />
     </div>
   )
 }

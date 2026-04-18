@@ -16,14 +16,14 @@
   backdrop-filter: blur(4px);
   z-index: 50;
 }
-
 .write-btn:hover {
   background: rgba(255,255,255,0.12);
   color: #fff;
 }
 
 /* ── OVERLAY ───────────────────────────────── */
-.scroll-overlay {
+.scroll-overlay,
+.letter-viewer-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.55);
@@ -35,10 +35,10 @@
 }
 
 /* ── SCROLL CONTAINER ──────────────────────── */
-.scroll-container {
+.scroll-container,
+.letter-viewer-scroll {
   position: relative;
-  width: 80vw;
-  max-width: 1000px;
+  width: min(92vw, 92vh, 900px);
   animation: unrollScroll 0.5s ease forwards;
   image-rendering: pixelated;
   filter: drop-shadow(0 16px 48px rgba(0,0,0,0.8));
@@ -46,41 +46,34 @@
 
 .scroll-bg-img {
   width: 100%;
+  height: auto;
   display: block;
   image-rendering: pixelated;
   pointer-events: none;
   user-select: none;
 }
 
-/* ── WRITING CONTENT ───────────────────────── */
-.scroll-content {
+/* ── CONTENT LAYER (top/left/width/height set by JS) ── */
+.scroll-content,
+.viewer-content {
   position: absolute;
-  top: 28%;
-  left: 26%;
-  width: 48%;
-  height: 52%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 0 8px 10px 8px;
   box-sizing: border-box;
+  padding: 4% 3%;
+  overflow: hidden;
 }
 
-.scroll-content * {
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
+/* ── WRITE FORM ────────────────────────────── */
 .scroll-label {
   text-align: center;
-  font-size: 0.65rem;
+  font-size: clamp(0.45rem, 1.2cqi, 0.75rem);
   letter-spacing: 0.22em;
   color: #000;
   font-family: 'Courier New', monospace;
   font-weight: bold;
-  margin-bottom: 6px;
-  margin-top:20px
-
+  flex-shrink: 0;
+  margin-bottom: 4%;
 }
 
 .scroll-input,
@@ -90,12 +83,12 @@
   border: none;
   border-bottom: 1px solid #9c6a1f;
   color: #000;
-  padding: 4px 2px;
+  padding: 2px;
   outline: none;
-  font-size: 0.8rem;
+  font-size: clamp(0.5rem, 1.4cqi, 0.85rem);
   font-family: 'Courier New', monospace;
+  box-sizing: border-box;
 }
-
 .scroll-input::placeholder,
 .scroll-textarea::placeholder {
   color: #000;
@@ -104,31 +97,38 @@
 }
 
 .scroll-input {
-  height: 22px;
+  flex-shrink: 0;
+  height: clamp(18px, 5%, 28px);
+  margin-bottom: 3%;
 }
 
 .scroll-textarea {
-  height: 58px;
+  flex: 1;
+  min-height: 0;
   resize: none;
-  line-height: 1.4;
+  line-height: 1.5;
   overflow-y: auto;
 }
 
 .scroll-bottom-row {
+  flex-shrink: 0;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-top: -30px;
-  margin-left:30px;
-  padding:20px
+  margin-top: 3%;
+}
+
+.char-counter {
+  font-size: clamp(0.4rem, 1.1cqi, 0.62rem);
+  color: rgba(0,0,0,0.35);
+  font-family: 'Courier New', monospace;
+  margin: 0;
 }
 
 .scroll-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-top:-90px
+  gap: 10px;
 }
 
 .send-btn {
@@ -138,15 +138,13 @@
   border-right: 2px solid #3d1f00;
   border-bottom: 2px solid #3d1f00;
   color: #fff8e0;
-  padding: 4px 14px;
-  font-size: 0.65rem;
+  padding: 3px 10px;
+  font-size: clamp(0.45rem, 1.1cqi, 0.68rem);
   cursor: pointer;
   font-family: 'Courier New', monospace;
+  white-space: nowrap;
 }
-
-.send-btn:hover {
-  background: #a06e30;
-}
+.send-btn:hover { background: #a06e30; }
 
 .close-btn {
   background: transparent;
@@ -154,101 +152,53 @@
   padding: 0;
   margin: 0;
   color: #000;
-  font-size: 0.68rem;
+  font-size: clamp(0.45rem, 1.1cqi, 0.7rem);
   cursor: pointer;
   font-family: 'Courier New', monospace;
   line-height: 1;
 }
+.close-btn:hover { color: #5a3200; }
 
-.close-btn:hover {
-  color: #5a3200;
-}
-
-/* ── LETTER VIEWER OVERLAY ──────────────────── */
-.letter-viewer-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  backdrop-filter: blur(3px);
-}
-
-.letter-viewer-scroll {
-  position: relative;
-  width: 80vw;
-  max-width: 1000px;
-  animation: unrollScroll 0.4s ease forwards;
-  image-rendering: pixelated;
-  filter: drop-shadow(0 16px 48px rgba(0,0,0,0.8));
-}
-
-.letter-viewer-scroll .scroll-bg-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  image-rendering: pixelated;
-  user-select: none;
-  pointer-events: none;
-}
-
-.viewer-content {
-  position: absolute;
-  top: 45%;
-  left: 26%;
-  width: 48%;
-  height: 52%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 0 8px;
-}
-
+/* ── LETTER VIEWER ──────────────────────────── */
 .viewer-title {
   text-align: center;
-  font-size: 0.68rem;
+  font-size: clamp(0.5rem, 1.4cqi, 0.75rem);
   letter-spacing: 0.2em;
   color: #000;
   font-weight: bold;
   font-family: 'Courier New', monospace;
   text-transform: lowercase;
+  flex-shrink: 0;
+  margin-bottom: 4%;
 }
 
 .viewer-message {
-  font-size: 0.78rem;
+  flex: 1;
+  min-height: 0;
+  font-size: clamp(0.5rem, 1.3cqi, 0.78rem);
   color: #000;
   line-height: 1.7;
   font-style: italic;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
-  word-wrap: break-word;
-  overflow: hidden;
-  flex: 1;
+  overflow-y: auto;
   font-family: 'Courier New', monospace;
-  display: block;
-  max-height: 100%;
 }
 
 .viewer-footer {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 3%;
 }
 
 .viewer-right-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
   margin-left: auto;
-  margin-top:-510px
 }
 
 .glow-btn {
@@ -256,31 +206,26 @@
   border: 1px solid rgba(139, 95, 0, 0.4);
   color: #3d1f00;
   padding: 3px 10px;
-  font-size: 0.62rem;
+  font-size: clamp(0.42rem, 1.1cqi, 0.65rem);
   cursor: pointer;
   letter-spacing: 0.1em;
   transition: all 0.2s ease;
   font-family: 'Courier New', monospace;
+  white-space: nowrap;
 }
-
-.glow-btn:hover {
-  background: rgba(139, 95, 0, 0.1);
-}
+.glow-btn:hover { background: rgba(139, 95, 0, 0.1); }
 
 .delete-btn {
   background: transparent;
   border: none;
   color: rgba(139, 60, 60, 0.7);
-  font-size: 0.62rem;
+  font-size: clamp(0.42rem, 1.1cqi, 0.65rem);
   cursor: pointer;
   letter-spacing: 0.08em;
   font-family: 'Courier New', monospace;
   transition: color 0.2s ease;
 }
-
-.delete-btn:hover {
-  color: rgba(180, 60, 60, 0.95);
-}
+.delete-btn:hover { color: rgba(180, 60, 60, 0.95); }
 
 /* ── SKY LOADING ────────────────────────────── */
 .sky-loading {
@@ -292,14 +237,12 @@
   gap: 12px;
   z-index: 50;
 }
-
 .sky-loading-dot {
   color: rgba(255, 255, 255, 0.4);
   font-size: 0.8rem;
   animation: skyLoadBlink 1.2s ease-in-out infinite;
 }
-
-.d1 { animation-delay: 0s;   }
+.d1 { animation-delay: 0s; }
 .d2 { animation-delay: 0.2s; }
 .d3 { animation-delay: 0.4s; }
 
@@ -311,20 +254,6 @@
 
 /* ── ANIMATION ─────────────────────────────── */
 @keyframes unrollScroll {
-  from {
-    opacity: 0;
-    transform: scaleY(0.2) scaleX(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.char-counter {
-  font-size: 0.55rem;
-  color: rgba(0,0,0,0.35);
-  text-align: right;
-  font-family: 'Courier New', monospace;
-  margin-top: -80px;
-  margin-right:20px
+  from { opacity: 0; transform: scaleY(0.2) scaleX(0.8); }
+  to   { opacity: 1; transform: scale(1); }
 }
