@@ -32,7 +32,7 @@ function AuthModal({ onClose }) {
       if (error) {
         setError(error.message)
       } else {
-        setSuccess(true)
+        onClose()
       }
     }
 
