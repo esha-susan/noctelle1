@@ -37,6 +37,7 @@ body {
   image-rendering: pixelated;
 }
 
+/* ── TOP BAR ────────────────────────────────── */
 .top-bar {
   position: absolute;
   top: 20px;
@@ -66,6 +67,10 @@ body {
 .user-email {
   font-size: 0.72rem;
   color: rgba(255,255,255,0.5);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .signout-btn {
@@ -73,6 +78,7 @@ body {
   border: none;
   color: rgba(255,255,255,0.4);
   cursor: pointer;
+  font-size: 0.72rem;
 }
 
 .sky-toggle-wrap {
@@ -81,4 +87,177 @@ body {
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
+}
+
+/* ── SKY CHOOSER ────────────────────────────── */
+.sky-chooser {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 10px 20px;
+  backdrop-filter: blur(6px);
+}
+
+.sky-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  opacity: 0.45;
+}
+
+.sky-choice:hover {
+  opacity: 0.75;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sky-choice.chosen {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+.sky-choice-icon {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.sky-choice.chosen .sky-choice-icon {
+  color: #ffffff;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(200, 180, 255, 0.5);
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%   { text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 20px rgba(200,180,255,0.5); }
+  50%  { text-shadow: 0 0 14px rgba(255,255,255,1),  0 0 35px rgba(200,180,255,0.8); }
+  100% { text-shadow: 0 0 8px rgba(255,255,255,0.8), 0 0 20px rgba(200,180,255,0.5); }
+}
+
+.sky-choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sky-choice-title {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+}
+
+.sky-choice.chosen .sky-choice-title {
+  color: #ffffff;
+}
+
+.sky-choice-sub {
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+
+.sky-choice.chosen .sky-choice-sub {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.sky-choice-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 1rem;
+  user-select: none;
+}
+
+/* ── MUSIC PLAYER ───────────────────────────── */
+.music-player {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 100;
+}
+
+.music-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.music-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* ── MOBILE ─────────────────────────────────── */
+@media (max-width: 600px) {
+  .top-bar {
+    top: 14px;
+    left: 14px;
+    gap: 8px;
+  }
+
+  .user-email {
+    max-width: 100px;
+    font-size: 0.62rem;
+  }
+
+  .signin-btn {
+    font-size: 0.7rem;
+    padding: 6px 14px;
+  }
+
+  .music-player {
+    top: 14px;
+    right: 14px;
+  }
+
+  .music-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .sky-chooser {
+    bottom: 80px;
+    padding: 8px 14px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+
+  .sky-choice {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .sky-choice-title {
+    font-size: 0.62rem;
+  }
+
+  .sky-choice-sub {
+    display: none;
+  }
+
+  .sky-choice-icon {
+    font-size: 0.8rem;
+  }
 }
