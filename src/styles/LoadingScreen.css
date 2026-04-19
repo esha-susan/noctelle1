@@ -20,11 +20,17 @@
   .loading-bg {
     position: absolute;
     inset: 0;
-    background-image: url('/loading-bg-mobile.png');
+    background-image: url('/loading-bg.png');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     image-rendering: pixelated;
+  }
+  
+  @media (max-width: 768px) {
+    .loading-bg {
+      background-image: url('/loading-bg-mobile.png');
+    }
   }
   
   /* slight dark vignette over image so text pops */
