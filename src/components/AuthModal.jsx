@@ -32,7 +32,7 @@ function AuthModal({ onClose }) {
       if (error) {
         setError(error.message)
       } else {
-        onClose()
+        setSuccess(true)
       }
     }
 
@@ -58,11 +58,22 @@ function AuthModal({ onClose }) {
         <div className="auth-body">
           {success ? (
             <>
-              <p className="auth-label">check your inbox</p>
+              <p className="auth-label">welcome to the sky</p>
               <p className="auth-success">
-                A confirmation email has been sent to <strong>{email}</strong>. Please verify your email to continue.
+              Your star is waiting. Step into the sky.
               </p>
               <div className="auth-actions">
+                <button
+                  className="auth-submit-btn"
+                  onClick={() => {
+                    setSuccess(false)
+                    setMode("signin")
+                    setEmail("")
+                    setPassword("")
+                  }}
+                >
+                  ✦ sign in
+                </button>
                 <button className="auth-close-btn" onClick={onClose}>
                   close
                 </button>
