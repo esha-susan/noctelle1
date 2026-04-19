@@ -210,11 +210,29 @@
   }
   @media (max-width: 600px) {
     .loading-bg {
-      background-size: 100% 100%;
-      background-position: center center;
+      background-size: cover;
+      background-position: center 40%;
     }
   
     .loading-footer {
-      bottom: 24px;
+      bottom: 40px;
+      width: 100%;
+      align-items: center;
+    }
+  
+    .loading-subtitle {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+  
+    .loading-bar-wrap {
+      width: 120px;
+    }
+  
+    .loading-hint {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
     }
   }
