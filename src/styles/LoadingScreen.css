@@ -210,9 +210,8 @@
   }
   @media (max-width: 600px) {
     .loading-bg {
-      background-size: contain;
+      background-size: 100% 100%;
       background-position: center center;
-      background-color: #0d0d1a;
     }
   
     .loading-footer {
