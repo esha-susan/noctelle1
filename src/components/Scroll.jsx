@@ -8,6 +8,7 @@ const SCROLL_CONTENT_RIGHT  = 0.77
 
 function useScrollRect(ref, enabled) {
   const [rect, setRect] = useState(null)
+
   useEffect(() => {
     if (!enabled || !ref.current) return
     const update = () => {
@@ -27,18 +28,27 @@ function useScrollRect(ref, enabled) {
     ro.observe(ref.current)
     return () => ro.disconnect()
   }, [ref, enabled])
+
   return rect
 }
 
-function Scroll({ onSend, isPrivate }) {
+function Scroll({ onSend, isPrivate, user, onAuthRequired }) {
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
   const containerRef = useRef(null)
   const rect = useScrollRect(containerRef, isOpen)
 
-  const openScroll  = () => setIsOpen(true)
-  const closeScroll = () => { setIsOpen(false); setTitle(""); setMessage("") }
+  const openScroll = () => {
+    if (!user) { onAuthRequired(); return }
+    setIsOpen(true)
+  }
+
+  const closeScroll = () => {
+    setIsOpen(false)
+    setTitle("")
+    setMessage("")
+  }
 
   const handleSend = () => {
     if (title.trim() === "" || message.trim() === "") return
@@ -88,8 +98,12 @@ function Scroll({ onSend, isPrivate }) {
               <div className="scroll-bottom-row">
                 <p className="char-counter">{message.length}/160</p>
                 <div className="scroll-actions">
-                  <button className="send-btn" onClick={handleSend}>✦ send to sky</button>
-                  <button className="close-btn" onClick={closeScroll}>close</button>
+                  <button className="send-btn" onClick={handleSend}>
+                    ✦ send to sky
+                  </button>
+                  <button className="close-btn" onClick={closeScroll}>
+                    close
+                  </button>
                 </div>
               </div>
             </div>

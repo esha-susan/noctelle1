@@ -77,7 +77,7 @@ function App() {
   const handleSend = async (letter) => {
     setPendingStarPos({ x: letter.x, y: letter.y })
     setShowEnvelope(true)
-
+  
     const { data, error } = await supabase
       .from("letters")
       .insert([
@@ -93,21 +93,23 @@ function App() {
       ])
       .select()
       .single()
-
+  
     if (error) {
       setShowEnvelope(false)
+      if (error.code === "42501") {
+        alert("you've sent 5 letters today... the sky needs time to breathe. come back tomorrow ✦")
+      }
       return
     }
-
+  
     const isCurrentMode =
       (skyMode === "public" && !letter.isPrivate) ||
       (skyMode === "private" && letter.isPrivate)
-
+  
     if (isCurrentMode) {
       setPendingStars((prev) => [...prev, data])
     }
   }
-
   const handleStarReveal = () => {
     setPendingStars((pending) => {
       setStars((prev) => {
@@ -299,7 +301,12 @@ function App() {
       />
 
       {/* write scroll */}
-      <Scroll onSend={handleSend} isPrivate={skyMode === "private"} />
+      <Scroll
+      onSend={handleSend}
+      isPrivate={skyMode === "private"}
+      user={user}
+      onAuthRequired={() => setShowAuth(true)}
+      />
     </div>
   )
 }
