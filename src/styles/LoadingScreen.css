@@ -208,3 +208,14 @@
     50%  { opacity: 0.6; }
     100% { opacity: 0.2; }
   }
+  @media (max-width: 600px) {
+    .loading-bg {
+      background-size: contain;
+      background-position: center center;
+      background-color: #0d0d1a;
+    }
+  
+    .loading-footer {
+      bottom: 24px;
+    }
+  }
